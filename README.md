@@ -2,27 +2,27 @@
 
 > 🇫🇷 [Version française](README.fr.md)
 
-A community-driven baseline to deploy Microsoft Defender for Endpoint via Microsoft Intune...
+A community-driven baseline to deploy Microsoft Defender for Endpoint via Microsoft Intune, covering Windows workstations and servers, with a structured group-based approach and progressive deployment strategy.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Blog](https://img.shields.io/badge/Read%20the%20blog-blog.sebastienmiro.fr-blue)](https://blog.sebastienmiro.fr)
 
-> ⚠️ **Important** - This baseline is a starting point. It has been designed against common audit findings and Microsoft recommendations, but it is not a one-size-fits-all solution. Review each policy against your business requirements before deploying.
+> ⚠️ **Important** - This baseline is a starting point. It has been designed based on common audit findings and Microsoft recommendations, but it does not fit every context as-is. Each policy must be reviewed against business requirements before deployment.
 
 ## Why this project
 
-MDE configurations encountered in real-world audits are rarely consistent. Common issues include:
+MDE configurations encountered in real-world audits are rarely consistent. Common issues:
 
 - Tamper Protection disabled
 - ASR rules stuck in Audit mode indefinitely
 - Antivirus exclusions inherited from legacy products, never reviewed
-- Onboarding scripts deployed via GPO with no inventory consistency
-- Mixed management methods (Intune + GPO + local scripts) with no clear source of truth
+- Onboarding scripts deployed via GPO with no consistent inventory
+- Mixed management methods (Intune + GPO + local scripts) without a clear source of truth
 - No distinction between workstations and servers in policy targeting
 
-This project provides a baseline that addresses these issues, with a clear separation between catch-all minimums, production policies, and pilot policies, for both workstations and servers.
+This project provides a baseline that addresses these issues, with clear separation between catch-all minimums, production policies, and pilot policies, for both workstations and servers.
 
-## What you get
+## What this baseline contains
 
 ### Entra ID groups
 
@@ -37,21 +37,21 @@ This project provides a baseline that addresses these issues, with a clear separ
 - **EDR Onboarding** - single policy covering workstations and servers
 - **Antivirus** - five layered policies (catch-all + production WS + production Srv + pilot WS + pilot Srv)
 - **Firewall** - three policies (global configuration + workstation rules + server rules)
-- **Attack Surface Reduction** - four policies organized by risk category (low risk in Block, Office rules in Audit / Warn / Block progressive deployment)
+- **Attack Surface Reduction** - four policies organized by risk category (low-risk rules in Block, Office rules in progressive Audit / Warn / Block deployment)
 
 ### Tenant-level configuration
 
 - Tamper Protection at tenant level
-- Security Management for MDE (for devices without Intune license)
+- Security Management for MDE (for devices without an Intune license)
 - Automated Investigation in Semi mode
 
-## Deployment options
+## Deployment methods
 
-This repository supports two deployment methods:
+Three methods are supported.
 
 ### Option 1 - PowerShell scripts (recommended)
 
-Deploy everything via Microsoft Graph PowerShell scripts. Reproducible, auditable, version-controlled.
+Deployment via Microsoft Graph PowerShell scripts. Reproducible, auditable, version-controlled.
 
 ```powershell
 cd scripts
@@ -65,9 +65,9 @@ See [scripts/README.md](scripts/README.md) for the full sequence.
 
 ### Option 2 - Manual deployment
 
-For those who prefer the Intune admin center UI, every step is documented with the exact paths, parameters, and values to apply.
+For administrators who prefer the Intune admin center UI, every step is documented with the exact paths, parameters, and values to apply.
 
-See [manual-deployment/README.md](manual-deployment/README.md).
+See [manual-deployment/en/README.md](manual-deployment/en/README.md).
 
 ### Option 3 - IntuneManagement imports (coming soon)
 
@@ -79,25 +79,25 @@ This option will be added after sandbox validation. See [intunemanagement-export
 
 | Document | Topic |
 |---|---|
-| [01-prerequisites.md](docs/01-prerequisites.md) | Licenses, tenant activation, MDE/Intune connection |
-| [02-architecture.md](docs/02-architecture.md) | Group structure, policy layering logic |
-| [03-policies-reference.md](docs/03-policies-reference.md) | Exhaustive reference of every parameter |
-| [04-deployment-plan.md](docs/04-deployment-plan.md) | 11-week progressive deployment calendar |
-| [05-verification.md](docs/05-verification.md) | PowerShell commands and portal checks |
-| [06-customization.md](docs/06-customization.md) | How to adapt the baseline to your context |
-| [07-troubleshooting.md](docs/07-troubleshooting.md) | Common issues and resolutions |
+| [01-prerequisites.md](docs/en/01-prerequisites.md) | Licensing, tenant activation, MDE/Intune connection |
+| [02-architecture.md](docs/en/02-architecture.md) | Group structure, policy layering logic |
+| [03-policies-reference.md](docs/en/03-policies-reference.md) | Exhaustive reference of every parameter |
+| [04-deployment-plan.md](docs/en/04-deployment-plan.md) | 11-week progressive deployment calendar |
+| [05-verification.md](docs/en/05-verification.md) | PowerShell commands and portal checks |
+| [06-customization.md](docs/en/06-customization.md) | Adapting the baseline to your context |
+| [07-troubleshooting.md](docs/en/07-troubleshooting.md) | Common issues and resolutions |
 
 ## Quick start
 
-1. Make sure you meet the [prerequisites](docs/01-prerequisites.md)
+1. Verify [prerequisites](docs/en/01-prerequisites.md) are in place
 2. Clone this repository
-3. Choose your deployment option (scripts, manual, or imports)
-4. Follow the [deployment plan](docs/04-deployment-plan.md)
-5. Validate using the [verification guide](docs/05-verification.md)
+3. Choose a deployment method (scripts, manual, or imports)
+4. Follow the [deployment plan](docs/en/04-deployment-plan.md)
+5. Validate using the [verification guide](docs/en/05-verification.md)
 
 ## Companion blog series
 
-This baseline is accompanied by an 11-part technical series on [blog.sebastienmiro.fr](https://blog.sebastienmiro.fr), which explains the rationale behind each policy and parameter.
+This baseline is accompanied by an 11-part technical series on [blog.sebastienmiro.fr](https://blog.sebastienmiro.fr) (in French), explaining the rationale behind each policy and each parameter.
 
 | Episode | Topic |
 |---|---|
@@ -115,18 +115,18 @@ This baseline is accompanied by an 11-part technical series on [blog.sebastienmi
 
 ## Contributing
 
-Issues and pull requests are welcome. If you identify a missing setting, an incorrect value, or a better approach, feel free to open an issue.
+Issues and pull requests are welcome. Identifying missing parameters, incorrect values, or better approaches is encouraged through issue submissions.
 
-Areas where contributions are especially valuable:
+Particularly valuable contributions:
 
 - Validation in real-world environments (sandbox or production tenant feedback)
 - Server-specific edge cases (Domain Controllers, Exchange, SQL Server)
 - IntuneManagement exports (once initial validation is complete)
-- Translations of the documentation
+- Translations and documentation improvements
 
 ## Disclaimer
 
-This baseline is provided as-is. No liability is assumed for its application in production tenants. Always review and test in a controlled environment before deploying to production.
+This baseline is provided as-is. No liability is assumed for its use in production. Always review and test in a controlled environment before deploying.
 
 ## License
 
