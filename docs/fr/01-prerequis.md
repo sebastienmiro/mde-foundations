@@ -1,6 +1,6 @@
 # Prérequis
 
-Avant de déployer le socle MDE Foundations, vérifier que les éléments suivants sont en place dans ton tenant.
+Avant de déployer le socle MDE Foundations, les éléments suivants doivent être en place dans le tenant.
 
 ## Licences
 
@@ -28,7 +28,7 @@ Les serveurs nécessitent une licence dédiée, distincte des licences utilisate
 
 ### Tenant MDE
 
-Le tenant MDE doit être initialisé. Aller dans `security.microsoft.com > Paramètres > Points de terminaison`. Si MDE n'a jamais été activé, la première connexion déclenche un assistant d'initialisation. Le compléter avant de continuer.
+Le tenant MDE doit être initialisé. La page d'initialisation se trouve dans `security.microsoft.com > Paramètres > Points de terminaison`. Si MDE n'a jamais été activé, la première connexion déclenche un assistant d'initialisation, à compléter avant de continuer.
 
 ### Connexion MDE/Intune
 
@@ -36,7 +36,7 @@ Indispensable pour que les policies Intune poussent les paramètres MDE.
 
 `security.microsoft.com > Paramètres > Points de terminaison > Caractéristiques avancées > Connexion Microsoft Intune`
 
-Mettre sur **On**.
+État : **On**.
 
 ### Security Management for MDE
 
@@ -48,17 +48,17 @@ Activer le périmètre pour les types d'appareils concernés (Workstations, Serv
 
 ## Permissions administratives
 
-Pour déployer le socle, il faut au moins l'un des rôles suivants dans Entra ID :
+Pour déployer le socle, au moins l'un des rôles suivants dans Entra ID est requis :
 
 - Global Administrator
 - Intune Administrator + Security Administrator
 
-Pour l'exploitation au quotidien après déploiement, suivre le principe du moindre privilège. Séparation des rôles recommandée :
+Pour l'exploitation au quotidien après déploiement, le principe du moindre privilège s'applique. Séparation des rôles recommandée :
 
 - **Endpoint Security Manager** - gère MDE et les policies Endpoint Security
 - **Intune Service Administrator** - gère les autres policies Intune et les applications
 
-Les deux rôles doivent être activés à la demande via Privileged Identity Management (PIM), avec MFA imposée par accès conditionnel.
+Les deux rôles devraient être activés à la demande via Privileged Identity Management (PIM), avec MFA imposée par accès conditionnel.
 
 ## Prérequis réseau
 
@@ -70,7 +70,7 @@ Points d'attention courants :
 - Des exceptions de proxy peuvent être nécessaires pour les endpoints MDE
 - Les URLs diffèrent selon la région du tenant (EU, US, UK)
 
-Valider la connectivité avec l'outil `MDATPClientAnalyzer` disponible dans le portail MDE avant un déploiement à grande échelle.
+L'outil `MDATPClientAnalyzer` disponible dans le portail MDE permet de valider la connectivité avant un déploiement à grande échelle.
 
 ## Convention de nommage
 
@@ -79,7 +79,7 @@ Les règles de groupes dynamiques de ce socle reposent sur les préfixes de nom 
 - Postes : généralement `WRK-`, `LAP-`, `PC-`, ou similaire
 - Serveurs : généralement `SRV-`, `SQL-`, `WEB-`, ou similaire
 
-Si ton environnement ne suit pas une convention stricte, deux alternatives :
+En l'absence de convention stricte, deux alternatives :
 
 - **Utiliser un extensionAttribute** dans Active Directory (pour les appareils hybrid join), renseigné via un script. Cet attribut se synchronise vers Entra ID via Entra Connect et peut servir dans les règles de groupes dynamiques.
 - **Utiliser des affectations statiques** en mesure transitoire le temps de mettre en place une convention.
@@ -88,12 +88,12 @@ Voir [06-personnalisation.md](06-personnalisation.md) pour les stratégies d'ada
 
 ## Checklist de vérification
 
-Avant de déployer, vérifier :
+Avant le déploiement :
 
 - [ ] Le tenant MDE est initialisé
 - [ ] La connexion MDE/Intune est On
 - [ ] Security Management for MDE est activé (si nécessaire)
-- [ ] Tu disposes du rôle administratif requis
+- [ ] Le rôle administratif requis est disponible
 - [ ] La connectivité réseau vers les endpoints MDE est validée
 - [ ] La convention de nommage ou une stratégie de ciblage alternative est définie
 
