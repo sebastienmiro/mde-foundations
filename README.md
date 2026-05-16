@@ -1,6 +1,8 @@
 # MDE Foundations
 
-A community-driven baseline to deploy Microsoft Defender for Endpoint via Microsoft Intune, covering Windows workstations and servers, with a structured group-based approach and progressive deployment strategy.
+> 🇫🇷 [Version française](README.fr.md)
+
+A community-driven baseline to deploy Microsoft Defender for Endpoint via Microsoft Intune...
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Blog](https://img.shields.io/badge/Read%20the%20blog-blog.sebastienmiro.fr-blue)](https://blog.sebastienmiro.fr)
