@@ -17,36 +17,38 @@ Le socle ne se déploie pas en une seule fois. Trois raisons à cela.
 ```mermaid
 gantt
     title Calendrier de déploiement MDE Foundations
-    dateFormat YYYY-MM-DD
-    axisFormat Sem %W
+    dateFormat X
+    axisFormat Sem %s
 
     section Socle
-    Création groupes Entra ID        :done, g1, 2025-01-06, 3d
-    Policy EDR Onboarding             :done, e1, after g1, 2d
-    Policy AV Catch-all               :done, a1, after e1, 2d
-    Policy FW Catch-all               :done, f1, after a1, 2d
-    Tamper Protection tenant         :done, t1, after f1, 1d
+    Création groupes Entra ID         :done, g1, 0, 3
+    Policy EDR Onboarding             :done, e1, 3, 2
+    Policy AV Catch-all               :done, a1, 5, 2
+    Policy FW Catch-all               :done, f1, 7, 2
+    Tamper Protection tenant          :done, t1, 9, 1
 
     section Production
-    Policies AV/FW Workstations      :active, p1, 2025-01-13, 5d
-    Policies AV/FW Servers           :active, p2, 2025-01-13, 5d
-    Security Management for MDE      :active, sm, 2025-01-13, 3d
-    ASR Low Risk Block               :active, ar, 2025-01-15, 5d
+    Policies AV/FW Workstations       :active, p1, 7, 5
+    Policies AV/FW Servers            :active, p2, 7, 5
+    Security Management for MDE       :active, sm, 7, 3
+    ASR Low Risk Block                :active, ar, 9, 5
 
-    section ASR Office - Audit
-    ASR Office Audit sur pilote      :asr1, 2025-01-20, 14d
-    ASR Office Audit sur production  :asr2, 2025-02-03, 21d
+    section ASR Office Audit
+    Audit sur pilote                  :asr1, 14, 14
+    Audit sur production              :asr2, 28, 21
 
-    section ASR Office - Warn
-    Préparation utilisateurs         :prep, 2025-02-17, 7d
-    ASR Office Warn sur production   :asr3, 2025-02-24, 21d
+    section ASR Office Warn
+    Préparation utilisateurs          :prep, 42, 7
+    Warn sur production               :asr3, 49, 21
 
-    section ASR Office - Block
-    ASR Office Block sur production  :asr4, 2025-03-17, 7d
-    Surveillance renforcée           :surv, after asr4, 14d
+    section ASR Office Block
+    Block sur production              :asr4, 70, 7
+    Surveillance renforcée            :surv, 77, 14
 ```
 
-## Phase 1 - Mise en place du socle (semaine 1)
+Note : les unités sur l'axe sont en jours relatifs (Semaine 1 = jours 0 à 7, Semaine 2 = jours 7 à 14, etc.).
+
+## Phase 1 - Mise en place du socle (Semaine 1)
 
 Création des groupes Entra ID et activation des policies catch-all.
 
@@ -70,7 +72,7 @@ flowchart TD
 
 ### Points de validation
 
-À la fin de la semaine 1, vérifier :
+À la fin de la Semaine 1, vérifier :
 
 - Les cinq groupes Entra ID sont créés et leurs règles dynamiques fonctionnent correctement
 - Les appareils Windows remontent dans le portail MDE avec le statut `Active`
@@ -79,7 +81,7 @@ flowchart TD
 
 Voir [05-verification.md](05-verification.md) pour les commandes de vérification.
 
-## Phase 2 - Déploiement production (semaine 2)
+## Phase 2 - Déploiement production (Semaine 2)
 
 Extension du socle vers les groupes production postes et serveurs, et activation de Security Management for MDE.
 
@@ -105,14 +107,14 @@ flowchart TD
 
 ### Points de validation
 
-À la fin de la semaine 2, vérifier :
+À la fin de la Semaine 2, vérifier :
 
 - Les policies de production sont appliquées sur les machines des groupes correspondants (statut `Réussi`)
 - Les statuts `Conflit` éventuels sont tracés et compris (en général : aucune si les policies sont bien construites)
 - Les machines hors Intune mais onboardées dans MDE reçoivent les policies via Security Management for MDE
 - Aucune remontée d'incident applicatif lié à la règle ASR LSASS ou aux autres règles à faible risque
 
-## Phase 3 - ASR Office Audit sur pilote (semaines 3 à 4)
+## Phase 3 - ASR Office Audit sur pilote (Semaines 3 et 4)
 
 Première confrontation des règles ASR Office au monde réel, en mode passif (Audit).
 
@@ -120,9 +122,9 @@ Première confrontation des règles ASR Office au monde réel, en mode passif (A
 
 ```mermaid
 flowchart LR
-    A[Sem 3 - Jour 1<br/>Policy MDE-ASR-Office-Audit<br/>sur MDE-Pilot-Workstations] --> B[Sem 3 - Jours 2 à 7<br/>Collecte de la télémétrie<br/>portail MDE et KQL]
-    B --> C[Sem 4 - Jours 1 à 7<br/>Analyse des remontées<br/>Identification des workflows métier]
-    C --> D[Sem 4 - Jour 7<br/>Liste des exclusions à créer<br/>Documentation justifiée]
+    A[Sem 3 Jour 1<br/>Policy MDE-ASR-Office-Audit<br/>sur MDE-Pilot-Workstations] --> B[Sem 3 Jours 2 à 7<br/>Collecte de la télémétrie<br/>portail MDE et KQL]
+    B --> C[Sem 4 Jours 1 à 7<br/>Analyse des remontées<br/>Identification des workflows métier]
+    C --> D[Sem 4 Jour 7<br/>Liste des exclusions à créer<br/>Documentation justifiée]
 
     style A fill:#ffe8cc
     style B fill:#fff4cc
@@ -145,12 +147,12 @@ Les processus légitimes récurrents donnent lieu à une exclusion ASR par règl
 
 ### Points de validation
 
-À la fin de la semaine 4, la liste des exclusions justifiées pour les règles Office doit être finalisée et documentée :
+À la fin de la Semaine 4, la liste des exclusions justifiées pour les règles Office doit être finalisée et documentée :
 
 | Règle ASR | Processus exclu | Justification | Demandeur | Date de revue |
 |---|---|---|---|---|
 
-## Phase 4 - ASR Office Audit étendu (semaines 5 à 6)
+## Phase 4 - ASR Office Audit étendu (Semaines 5 et 6)
 
 Extension de la phase Audit aux postes de production pour capter les workflows non présents sur le pilote.
 
@@ -160,8 +162,8 @@ Ajout de `MDE-Production-Workstations` à l'affectation de `MDE-ASR-Office-Audit
 
 ```mermaid
 flowchart LR
-    A[Sem 5 - Jour 1<br/>Extension Audit sur production] --> B[Sem 5 à 6<br/>Suivi quotidien<br/>du volume de détections]
-    B --> C[Sem 6 - Jour 7<br/>Compléter la liste<br/>d'exclusions avec les nouveaux cas]
+    A[Sem 5 Jour 1<br/>Extension Audit sur production] --> B[Sem 5 et 6<br/>Suivi quotidien<br/>du volume de détections]
+    B --> C[Sem 6 Jour 7<br/>Complément de la liste<br/>d'exclusions avec les nouveaux cas]
 
     style A fill:#ffe8cc
     style B fill:#fff4cc
@@ -170,9 +172,9 @@ flowchart LR
 
 ### Points de validation
 
-À la fin de la semaine 6, le volume de détections en Audit doit être stable (pas de nouveaux workflows identifiés depuis plusieurs jours). Si ce n'est pas le cas, prolonger la phase Audit d'une à deux semaines.
+À la fin de la Semaine 6, le volume de détections en Audit doit être stable (pas de nouveaux workflows identifiés depuis plusieurs jours). Si ce n'est pas le cas, prolonger la phase Audit d'une à deux semaines.
 
-## Phase 5 - Préparation et bascule Warn (semaine 7)
+## Phase 5 - Préparation et bascule Warn (Semaine 7)
 
 Communication utilisateur et bascule des règles ASR Office en mode Warn.
 
@@ -202,9 +204,9 @@ Le message clé : la popup est un signal de sécurité, l'utilisateur peut cliqu
 
 ### Points de validation
 
-À la fin de la semaine 7, vérifier que la policy Warn est bien appliquée et que les premières popups apparaissent sur les postes ayant des workflows déclencheurs.
+À la fin de la Semaine 7, vérifier que la policy Warn est bien appliquée et que les premières popups apparaissent sur les postes ayant des workflows déclencheurs.
 
-## Phase 6 - Observation Warn (semaines 8 à 10)
+## Phase 6 - Observation Warn (Semaines 8 à 10)
 
 Phase critique d'observation. Les remontées Warn capturent les derniers cas non identifiés en Audit.
 
@@ -244,7 +246,7 @@ La bascule vers Block est validée lorsque les critères suivants sont remplis :
 
 Si l'un de ces critères n'est pas rempli, prolonger la phase Warn d'une semaine.
 
-## Phase 7 - Bascule Block (semaine 11 et au-delà)
+## Phase 7 - Bascule Block (Semaine 11 et au-delà)
 
 Bascule définitive en mode bloquant.
 
@@ -276,29 +278,18 @@ Pendant les deux semaines suivant la bascule Block, suivre quotidiennement :
 
 Tout pic anormal doit être analysé et donner lieu soit à une exclusion supplémentaire, soit à un retour temporaire en Warn pour l'application concernée.
 
-## Adaptation selon la taille du parc
-
-Le calendrier sur onze semaines est calibré pour un parc de plusieurs centaines de postes hétérogènes. Adaptation indicative :
-
-| Taille du parc | Durée totale recommandée | Phases à raccourcir |
-|---|---|---|
-| Moins de 50 postes | 5 à 6 semaines | Phases 3, 4 et 6 |
-| 50 à 200 postes | 8 à 9 semaines | Phases 4 et 6 |
-| 200 à 1000 postes | 11 semaines (référence) | Aucune |
-| Plus de 1000 postes | 13 à 16 semaines | Étendre phases 4 et 6 |
-
 ## Tableau de bord de suivi
 
-Pour suivre l'avancement du déploiement, un tableau de bord simple :
+Pour suivre l'avancement du déploiement, un tableau simple à tenir au fil des semaines :
 
 | Phase | Semaine | Statut | Date de bascule | Incidents notables |
 |---|---|---|---|---|
 | 1 - Socle | 1 | | | |
 | 2 - Production | 2 | | | |
-| 3 - ASR Office Audit pilote | 3-4 | | | |
-| 4 - ASR Office Audit production | 5-6 | | | |
+| 3 - ASR Office Audit pilote | 3 et 4 | | | |
+| 4 - ASR Office Audit production | 5 et 6 | | | |
 | 5 - Préparation et bascule Warn | 7 | | | |
-| 6 - Observation Warn | 8-10 | | | |
+| 6 - Observation Warn | 8 à 10 | | | |
 | 7 - Bascule Block | 11 | | | |
 
 ## Étapes suivantes
