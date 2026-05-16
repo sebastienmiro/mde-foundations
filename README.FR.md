@@ -22,7 +22,7 @@ Les configurations MDE rencontrées en audit sont rarement cohérentes. Les prob
 
 Ce projet fournit un socle qui adresse ces problèmes, avec une séparation claire entre socle minimal catch-all, policies de production et policies pilote, pour les postes de travail et les serveurs.
 
-## Ce que ça contient
+## Contenu du socle
 
 ### Groupes Entra ID
 
@@ -47,7 +47,7 @@ Ce projet fournit un socle qui adresse ces problèmes, avec une séparation clai
 
 ## Méthodes de déploiement
 
-Trois méthodes supportées.
+Trois méthodes sont supportées.
 
 ### Option 1 - Scripts PowerShell (recommandée)
 
@@ -65,7 +65,7 @@ Voir [scripts/README.md](scripts/README.md) pour la séquence complète.
 
 ### Option 2 - Déploiement manuel
 
-Pour ceux qui préfèrent l'interface Intune admin center, chaque étape est documentée avec les chemins, paramètres et valeurs exacts à appliquer.
+Pour les administrateurs qui préfèrent l'interface Intune admin center, chaque étape est documentée avec les chemins, paramètres et valeurs exacts à appliquer.
 
 Voir [manual-deployment/fr/README.md](manual-deployment/fr/README.md).
 
@@ -84,7 +84,7 @@ Cette option sera ajoutée après validation en sandbox. Voir [intunemanagement-
 | [03-reference-policies.md](docs/fr/03-reference-policies.md) | Référence exhaustive de chaque paramètre |
 | [04-plan-deploiement.md](docs/fr/04-plan-deploiement.md) | Calendrier de déploiement progressif sur 11 semaines |
 | [05-verification.md](docs/fr/05-verification.md) | Commandes PowerShell et vérifications dans le portail |
-| [06-personnalisation.md](docs/fr/06-personnalisation.md) | Comment adapter le socle à son contexte |
+| [06-personnalisation.md](docs/fr/06-personnalisation.md) | Adapter le socle à son contexte |
 | [07-depannage.md](docs/fr/07-depannage.md) | Problèmes courants et résolutions |
 
 ## Démarrage rapide
@@ -115,7 +115,7 @@ Ce socle est accompagné d'une série technique en 11 épisodes sur [blog.sebast
 
 ## Contributions
 
-Les issues et pull requests sont les bienvenues. Si tu identifies un paramètre manquant, une valeur incorrecte ou une meilleure approche, n'hésite pas à ouvrir une issue.
+Les issues et pull requests sont les bienvenues. L'identification de paramètres manquants, de valeurs incorrectes ou de meilleures approches est encouragée via l'ouverture d'une issue.
 
 Les contributions particulièrement utiles :
 
