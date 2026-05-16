@@ -52,3 +52,23 @@ Code couleur : bleu = socle catch-all, vert = production, orange = pilote / phas
 | ASR | LowRisk-Block, Office-Audit, Office-Warn, Office-Block | 4 |
 
 Total : 13 policies.
+
+## Cycle de vie des règles ASR Office
+
+Les règles ASR Office passent par trois phases de déploiement progressif. Vue d'ensemble du cycle :
+
+```mermaid
+stateDiagram-v2
+    [*] --> Audit: Déploiement initial<br/>sur pilote
+    Audit --> AuditProd: Extension production<br/>après 2-4 semaines
+    AuditProd --> Warn: Bascule Warn<br/>après validation
+    Warn --> Block: Bascule Block<br/>après validation Warn
+    Block --> [*]: Configuration cible
+    
+    Audit: MDE-ASR-Office-Audit<br/>sur pilote postes
+    AuditProd: MDE-ASR-Office-Audit<br/>sur production postes
+    Warn: MDE-ASR-Office-Warn<br/>sur production postes
+    Block: MDE-ASR-Office-Block<br/>sur production postes
+```
+
+Voir [04-plan-deploiement.md](04-plan-deploiement.md) pour le calendrier détaillé.
