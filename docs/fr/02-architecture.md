@@ -16,21 +16,25 @@ Le socle repose sur trois principes.
 
 Cinq groupes Entra ID, chacun avec un rôle clair.
 
-```
-MDE-CatchAll-Windows  (dynamique)
-├── Tous les appareils Windows du tenant
-│
-MDE-Pilot-Workstations  (statique)
-├── 5 à 20 postes représentatifs pour validation pré-production
-│
-MDE-Production-Workstations  (dynamique)
-├── Tous les postes en production, hors pilotes
-│
-MDE-Pilot-Servers  (statique)
-├── 2 à 5 serveurs pour validation pré-production, idéalement non critiques
-│
-MDE-Production-Servers  (dynamique)
-└── Tous les serveurs en production, hors pilotes
+```mermaid
+graph TD
+    A[Tenant Entra ID] --> B[MDE-CatchAll-Windows<br/>dynamique]
+    A --> C[MDE-Pilot-Workstations<br/>statique - 5 à 20 postes]
+    A --> D[MDE-Production-Workstations<br/>dynamique]
+    A --> E[MDE-Pilot-Servers<br/>statique - 2 à 5 serveurs]
+    A --> F[MDE-Production-Servers<br/>dynamique]
+
+    B -.couvre.-> G[Tous les appareils Windows]
+    C -.couvre.-> H[Postes de validation]
+    D -.couvre.-> I[Postes en production hors pilote]
+    E -.couvre.-> J[Serveurs de validation]
+    F -.couvre.-> K[Serveurs en production hors pilote]
+
+    style B fill:#cfe8ff,stroke:#0066cc
+    style C fill:#ffe8cc,stroke:#cc6600
+    style D fill:#d4f4d4,stroke:#006600
+    style E fill:#ffe8cc,stroke:#cc6600
+    style F fill:#d4f4d4,stroke:#006600
 ```
 
 ### Pourquoi dynamique pour catch-all et production, statique pour les pilotes
@@ -41,47 +45,89 @@ Les groupes pilote sont volontairement gérés manuellement. Ajouter un appareil
 
 ## Superposition des policies
 
-Les policies Endpoint Security d'Intune fusionnent lorsque plusieurs policies ciblent un même appareil :
+Les policies Endpoint Security d'Intune fusionnent lorsque plusieurs policies ciblent un même appareil.
 
-- **Listes** (exclusions, règles ASR) : fusion - l'union des valeurs de toutes les policies s'applique
-- **Valeurs simples** (Tamper Protection, Cloud Block Level) : conflit si les valeurs diffèrent - la valeur la plus sécurisée gagne, et un statut Conflit est remonté dans le portail
+```mermaid
+flowchart LR
+    A[Plusieurs policies<br/>sur un même appareil] --> B{Type de paramètre ?}
+    B -->|Liste<br/>exclusions, règles ASR| C[Fusion<br/>Union des valeurs]
+    B -->|Valeur simple<br/>Tamper, Cloud Block| D{Valeurs<br/>identiques ?}
+    D -->|Oui| E[Application normale]
+    D -->|Non| F[Conflit<br/>La valeur la plus sécurisée gagne]
+
+    style C fill:#d4f4d4,stroke:#006600
+    style E fill:#d4f4d4,stroke:#006600
+    style F fill:#ffd4d4,stroke:#cc0000
+```
 
 Ce comportement est ce qui rend l'approche en couches sécurisée. Le catch-all pose un plancher ; les policies de production ne peuvent que relever ce plancher, jamais l'abaisser.
 
 ## Hiérarchie des policies
 
+Trois niveaux superposés, du plus large au plus restrictif.
+
+```mermaid
+flowchart TB
+    subgraph "Niveau 3 - Pilote (le plus strict)"
+        P1[AV Cloud Block High Plus]
+        P2[Règles ASR Office progressives]
+    end
+
+    subgraph "Niveau 2 - Production"
+        Pr1[Paramètres AV par type d'appareil]
+        Pr2[Règles firewall WS/Srv]
+    end
+
+    subgraph "Niveau 1 - Catch-all (plancher)"
+        C1[Onboarding EDR]
+        C2[AV Cloud Block High]
+        C3[Tamper Protection]
+        C4[Configuration firewall globale]
+        C5[Règles ASR faible risque en Block]
+    end
+
+    Niveau1 --> Niveau2 --> Niveau3
+
+    style P1 fill:#ffe8cc
+    style P2 fill:#ffe8cc
+    style Pr1 fill:#d4f4d4
+    style Pr2 fill:#d4f4d4
+    style C1 fill:#cfe8ff
+    style C2 fill:#cfe8ff
+    style C3 fill:#cfe8ff
+    style C4 fill:#cfe8ff
+    style C5 fill:#cfe8ff
 ```
-                  ┌────────────────────────────────────┐
-                  │   Policies pilote (les + strictes) │
-                  │   - AV avec Cloud Block High+      │
-                  │   - Règles ASR Office progressives │
-                  └────────────────────────────────────┘
-                                  ▲
-                                  │ superposées à
-                                  │
-                  ┌────────────────────────────────────┐
-                  │   Policies de production           │
-                  │   - Paramètres AV spécifiques WS   │
-                  │   - Paramètres AV spécifiques Srv  │
-                  │   - Règles firewall WS             │
-                  │   - Règles firewall Srv            │
-                  └────────────────────────────────────┘
-                                  ▲
-                                  │ superposées à
-                                  │
-                  ┌────────────────────────────────────┐
-                  │   Policies catch-all (plancher)    │
-                  │   - Onboarding EDR                 │
-                  │   - AV avec Cloud Block High       │
-                  │   - Tamper Protection              │
-                  │   - Config globale firewall        │
-                  │   - Règles ASR faible risque       │
-                  └────────────────────────────────────┘
+
+## Flux d'application sur un appareil
+
+Vue concrète de ce qu'un appareil reçoit selon son appartenance aux groupes.
+
+```mermaid
+flowchart TD
+    Device[Nouveau poste Windows<br/>WRK-001 enregistré dans Entra ID]
+    
+    Device --> G1{Dans MDE-CatchAll-Windows ?}
+    G1 -->|Oui automatique| L1[Reçoit le socle catch-all<br/>EDR + AV minimal + FW global + ASR low risk]
+    
+    L1 --> G2{Dans MDE-Production-Workstations ?}
+    G2 -->|Oui via règle dynamique<br/>nom commence par WRK-| L2[Reçoit la couche production WS<br/>AV WS + FW rules WS]
+    
+    L2 --> G3{Dans MDE-Pilot-Workstations ?}
+    G3 -->|Non par défaut| L3[Configuration finale appliquée]
+    G3 -->|Oui ajout manuel| L4[Reçoit en plus<br/>AV Cloud Block High Plus<br/>ASR Office en cours de validation]
+    
+    L4 --> L3
+
+    style L1 fill:#cfe8ff
+    style L2 fill:#d4f4d4
+    style L4 fill:#ffe8cc
+    style L3 fill:#ffffff,stroke:#000,stroke-width:2px
 ```
 
 ## Matrice d'affectation
 
-Affectation de chaque policy aux groupes correspondants :
+Affectation de chaque policy aux groupes correspondants.
 
 | Policy | CatchAll | Pilot WS | Prod WS | Pilot Srv | Prod Srv |
 |---|---|---|---|---|---|
